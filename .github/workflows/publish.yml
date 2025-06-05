@@ -79,7 +79,7 @@ jobs:
         cat >> $GITHUB_STEP_SUMMARY << EOF
         # 🎉 Gem Published Successfully!
 
-        `activejob-compressible` version `$VERSION` has been published to RubyGems.
+        \`activejob-compressible\` version \`$VERSION\` has been published to RubyGems.
 
         ## 📦 Installation
         \`\`\`bash
