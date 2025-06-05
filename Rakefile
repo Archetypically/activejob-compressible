@@ -9,6 +9,17 @@ require "rubocop/rake_task"
 
 RuboCop::RakeTask.new
 
+# Override rake release to be a no-op in CI
+if ENV["CI"] || ENV["GITHUB_ACTIONS"]
+  Rake::Task["release"].clear
+  desc "Release (disabled in CI - use manual releases instead)"
+  task :release do
+    puts "⚠️  rake release is disabled in CI environments"
+    puts "   Use manual releases via GitHub Actions workflow instead"
+    exit 0
+  end
+end
+
 desc "Validate RBS type signatures"
 task :rbs do
   sh "bundle exec rbs validate"
