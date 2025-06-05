@@ -1,4 +1,9 @@
+---
 name: Publish Gem
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   release:
@@ -13,11 +18,14 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
     - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@13e7a03dc3ac6c3798f4570bfead2aed4d96abfb # v1.244.0
       with:
         ruby-version: '3.2'
         bundler-cache: true
@@ -53,7 +61,7 @@ jobs:
       run: bundle exec rake build:checksum
 
     - name: Publish to RubyGems
-      run: gem push pkg/activejob-compressible-*.gem
+      uses: rubygems/release-gem@a25424ba2ba8b387abc8ef40807c2c85b96cbe32 # v1.1.1
 
     - name: Annotate publication success
       id: publish_info
