@@ -52,12 +52,6 @@ jobs:
     - name: Build gem with checksum
       run: bundle exec rake build:checksum
 
-    - name: Set up RubyGems credentials
-      run: |
-        mkdir -p ~/.gem
-        echo ":rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}" > ~/.gem/credentials
-        chmod 0600 ~/.gem/credentials
-
     - name: Publish to RubyGems
       run: gem push pkg/activejob-compressible-*.gem
 
