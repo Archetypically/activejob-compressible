@@ -4,17 +4,6 @@ require "test_helper"
 
 module ActiveJob
   class CompressibleTest < Minitest::Test
-    class DummyCompressibleJob < ActiveJob::Base
-      include ActiveJob::Compressible
-      queue_as :default
-
-      attr_reader :arg
-
-      def perform(arg)
-        @arg = arg
-      end
-    end
-
     SMALL_PAYLOAD = { "foo" => "bar" }.freeze
     LARGE_PAYLOAD = { "data" => "x" * (ActiveJob::Compressible.configuration.compression_threshold + 1) }.freeze
 
