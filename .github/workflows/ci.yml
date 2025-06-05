@@ -27,7 +27,7 @@ jobs:
       run: bundle exec rake
 
     - name: Check conventional commits (PR only)
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
       run: bundle exec rake commit_lint
 
   test-build:

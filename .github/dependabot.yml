@@ -16,8 +16,6 @@ updates:
         patterns:
           - "*"
     open-pull-requests-limit: 5
-    reviewers:
-      - "Archetypically"
     labels:
       - "dependencies"
       - "bundler"
@@ -35,8 +33,6 @@ updates:
         patterns:
           - "*"
     open-pull-requests-limit: 2
-    reviewers:
-      - "Archetypically"
     labels:
       - "dependencies"
       - "github-actions"
