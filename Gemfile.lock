@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    activejob-compressible (1.0.0)
+    activejob-compressible (1.1.0)
       activejob (>= 6.0, < 9.0)
       activesupport (>= 6.0, < 9.0)
 

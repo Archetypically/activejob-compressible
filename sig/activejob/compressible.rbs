@@ -7,7 +7,7 @@ module ActiveJob
     module ClassMethods
       def deserialize: (Hash[String, untyped] job_data) -> ActiveJob::Base
 
-      def compress_if_needed: (Hash[String, untyped] obj) -> (Hash[String, untyped] | Hash[String, String | bool])
+      def compress_if_needed: (untyped obj) -> (untyped | Hash[String, String | bool])
 
       def decompress_if_needed: (untyped arg) -> untyped
 

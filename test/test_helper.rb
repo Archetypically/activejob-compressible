@@ -15,10 +15,11 @@ class DummyCompressibleJob < ActiveJob::Base
   include ActiveJob::Compressible
   queue_as :default
 
-  attr_reader :arg
+  attr_reader :args, :kwargs
 
-  def perform(arg)
-    @arg = arg
+  def perform(*args, **kwargs)
+    @args = args
+    @kwargs = kwargs
   end
 end
 

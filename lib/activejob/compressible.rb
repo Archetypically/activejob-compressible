@@ -18,10 +18,10 @@ module ActiveJob
   #   end
   #
   # How it works:
-  #   - When the job is serialized (enqueued), the first argument is checked.
-  #   - If the argument is a Hash and its JSON representation exceeds the compression threshold,
-  #     it is compressed using zlib and base64, and marked with a special key.
-  #   - When the job is deserialized (dequeued), the argument is checked for the marker and
+  #   - When the job is serialized (enqueued), all arguments are checked together.
+  #   - If the arguments' JSON representation exceeds the compression threshold,
+  #     they are compressed using zlib and base64, and marked with a special key.
+  #   - When the job is deserialized (dequeued), the arguments are checked for the marker and
   #     transparently decompressed if needed.
   #   - Old jobs (with uncompressed payloads) are still supported for backward compatibility.
   #
@@ -37,18 +37,15 @@ module ActiveJob
     included do
       def serialize
         super.tap do |h|
-          if h["arguments"] && h["arguments"].first.is_a?(Hash)
-            h["arguments"][0] = self.class.compress_if_needed(h["arguments"].first)
-          end
+          h["arguments"] = self.class.compress_if_needed(h["arguments"]) if h["arguments"]
         end
       end
     end
 
     class_methods do
       def deserialize(job_data)
-        arg = job_data["arguments"].first
         job_data = job_data.dup
-        job_data["arguments"][0] = decompress_if_needed(arg)
+        job_data["arguments"] = decompress_if_needed(job_data["arguments"])
         super
       end
 

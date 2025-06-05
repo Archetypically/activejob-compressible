@@ -10,20 +10,20 @@ module ActiveJob
     def test_does_not_compress_small_payloads
       job = DummyCompressibleJob.new(SMALL_PAYLOAD)
       serialized = job.serialize
-      refute serialized["arguments"].first.is_a?(Hash) && serialized["arguments"].first["_compressed"],
+      refute serialized["arguments"].is_a?(Hash) && serialized["arguments"]["_compressed"],
              "Small payload should not be compressed"
     end
 
     def test_compresses_and_decompresses_large_payloads
       job = DummyCompressibleJob.new(LARGE_PAYLOAD)
       serialized = job.serialize
-      assert serialized["arguments"].first["_compressed"], "Large payload should be compressed"
-      refute_equal serialized["arguments"].first["data"], LARGE_PAYLOAD, "Data should be compressed"
+      assert serialized["arguments"]["_compressed"], "Large payload should be compressed"
+      refute_equal serialized["arguments"]["data"], [LARGE_PAYLOAD], "Data should be compressed"
 
       # Simulate deserialization
       deserialized_job = DummyCompressibleJob.deserialize(serialized)
       deserialized_job.perform_now
-      assert_equal LARGE_PAYLOAD, deserialized_job.arg
+      assert_equal LARGE_PAYLOAD, deserialized_job.args.first
     end
 
     def test_handles_old_uncompressed_payloads
@@ -31,7 +31,7 @@ module ActiveJob
       old_job_data = DummyCompressibleJob.new(SMALL_PAYLOAD).serialize
       deserialized_job = DummyCompressibleJob.deserialize(old_job_data)
       deserialized_job.perform_now
-      assert_equal SMALL_PAYLOAD, deserialized_job.arg
+      assert_equal SMALL_PAYLOAD, deserialized_job.args.first
     end
 
     def test_configuration
@@ -48,7 +48,7 @@ module ActiveJob
       end
     end
 
-    def test_dynamic_configuration_threshold_changes # rubocop:disable Metrics/MethodLength
+    def test_dynamic_configuration_threshold_changes # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
       test_payload = create_test_payload_below_default(100_000)
       original_threshold = ActiveJob::Compressible.configuration.compression_threshold
 
@@ -68,7 +68,7 @@ module ActiveJob
         # Test 3: Verify decompression still works correctly
         deserialized_job = DummyCompressibleJob.deserialize(serialized2)
         deserialized_job.perform_now
-        assert_equal test_payload, deserialized_job.arg, "Payload should decompress correctly"
+        assert_equal test_payload, deserialized_job.args.first, "Payload should decompress correctly"
       end
     end
 
@@ -81,11 +81,11 @@ module ActiveJob
     end
 
     def assert_compressed(serialized, message)
-      assert serialized["arguments"].first["_compressed"], message
+      assert serialized["arguments"]["_compressed"], message
     end
 
     def refute_compressed(serialized, message)
-      refute serialized["arguments"].first.is_a?(Hash) && serialized["arguments"].first["_compressed"], message
+      refute serialized["arguments"].is_a?(Hash) && serialized["arguments"]["_compressed"], message
     end
   end
 end
