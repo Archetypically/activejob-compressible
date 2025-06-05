@@ -1,8 +1,9 @@
 # ActiveJob::Compressible
 
-Transparent compression for large ActiveJob payloads to avoid cache backend limits.
-
+[![Gem Version](https://badge.fury.io/rb/activejob-compressible.svg)](https://badge.fury.io/rb/activejob-compressible)
 [![CI](https://github.com/Archetypically/activejob-compressible/actions/workflows/ci.yml/badge.svg)](https://github.com/Archetypically/activejob-compressible/actions/workflows/ci.yml)
+
+Transparent compression for large ActiveJob payloads to avoid cache backend limits.
 
 ## Overview
 
