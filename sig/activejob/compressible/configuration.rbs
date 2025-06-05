@@ -1,0 +1,16 @@
+module ActiveJob
+  module Compressible
+    class Configuration
+      attr_accessor compression_threshold: Integer
+      attr_reader compression_algorithm: Symbol
+
+      def initialize: () -> void
+
+      def compression_algorithm=: (Symbol algorithm) -> Symbol
+
+      private
+
+      def default_compression_threshold: () -> Integer
+    end
+  end
+end

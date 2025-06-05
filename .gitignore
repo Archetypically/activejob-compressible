@@ -1,0 +1,12 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/checksums/
+/spec/reports/
+/tmp/
+
+# Generated gem files
+*.gem

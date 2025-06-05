@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ['3.1', '3.2', '3.3', '3.4']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Ruby ${{ matrix.ruby-version }}
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+
+    - name: Run all checks (tests, rubocop, rbs)
+      run: bundle exec rake
+
+    - name: Check conventional commits (PR only)
+      if: github.event_name == 'pull_request'
+      run: bundle exec rake commit_lint
+
+  test-build:
+    runs-on: ubuntu-latest
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ['3.1', '3.2', '3.3', '3.4']
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Ruby ${{ matrix.ruby-version }}
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+
+    - name: Build gem
+      run: bundle exec rake build
+
+    - name: Test gem installation
+      run: gem install ./pkg/activejob-compressible-*.gem
+
+    - name: Test gem loading
+      run: ruby -e "require 'activejob-compressible'; puts 'Gem loads successfully!'; puts 'Version:', ActiveJob::Compressible::VERSION"

@@ -1,0 +1,23 @@
+module ActiveJob
+  module Compressible
+    extend ActiveSupport::Concern
+
+    def serialize: () -> Hash[String, untyped]
+
+    module ClassMethods
+      def deserialize: (Hash[String, untyped] job_data) -> ActiveJob::Base
+
+      def compress_if_needed: (Hash[String, untyped] obj) -> (Hash[String, untyped] | Hash[String, String | bool])
+
+      def decompress_if_needed: (untyped arg) -> untyped
+
+      def compression_threshold: () -> Integer
+    end
+
+    VERSION: String
+
+    def self.configuration: () -> Configuration
+
+    def self.configure: () { (Configuration) -> void } -> void
+  end
+end

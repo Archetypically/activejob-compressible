@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'lib/activejob/compressible/version.rb'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Extract version
+      id: version
+      run: |
+        VERSION=$(ruby -r ./lib/activejob/compressible/version.rb -e "puts ActiveJob::Compressible::VERSION")
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Extract changelog entry
+      id: changelog
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+
+        # Extract the changelog entry for this version
+        awk -v version="$VERSION" '
+        BEGIN { found=0; content="" }
+        /^## \[/ {
+          if (found) exit
+          if ($0 ~ "\\[" version "\\]") found=1
+          next
+        }
+        found && /^## \[/ { exit }
+        found {
+          if (content != "") content = content "\n"
+          content = content $0
+        }
+        END { print content }
+        ' CHANGELOG.md > changelog_entry.txt
+
+        # Set the changelog content as output
+        {
+          echo 'changelog<<EOF'
+          cat changelog_entry.txt
+          echo EOF
+        } >> $GITHUB_OUTPUT
+
+    - name: Check if tag exists
+      id: check_tag
+      run: |
+        TAG="${{ steps.version.outputs.tag }}"
+        if git rev-parse "$TAG" >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create Release
+      if: steps.check_tag.outputs.exists == 'false'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        release_name: Release ${{ steps.version.outputs.tag }}
+        body: ${{ steps.changelog.outputs.changelog }}
+        draft: false
+        prerelease: false

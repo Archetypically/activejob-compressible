@@ -1,0 +1,5 @@
+module ActiveJob
+  module Compressible
+    VERSION: String
+  end
+end
