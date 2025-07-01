@@ -9,7 +9,7 @@ gem "rake", "~> 13.3"
 
 gem "minitest", "~> 5.16"
 
-gem "rubocop", "~> 1.76"
+gem "rubocop", "~> 1.77"
 
 # RBS type checking
 gem "rbs", "~> 3.0"
