@@ -7,12 +7,12 @@ gemspec
 
 gem "rake", "~> 13.3"
 
-gem "minitest", "~> 5.16"
+gem "minitest", "~> 5.26"
 
-gem "rubocop", "~> 1.76"
+gem "rubocop", "~> 1.81"
 
 # RBS type checking
-gem "rbs", "~> 3.0"
+gem "rbs", "~> 3.9"
 
 # For testing
 gem "activejob", ">= 6.0"
